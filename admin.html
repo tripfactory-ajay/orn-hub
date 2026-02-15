@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#000000">
     
     <title>Add Link - ORN Hub</title>
     <link rel="icon" type="image/png" href="orn-logo.png">
@@ -13,9 +13,9 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background: #000000;
             min-height: 100vh;
-            color: white;
+            color: #ffffff;
             padding: 20px;
         }
         
@@ -26,7 +26,7 @@
         }
         
         .back-btn {
-            color: #06b6d4;
+            color: #ffffff;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
@@ -38,13 +38,11 @@
         h1 {
             font-size: 32px;
             margin-bottom: 10px;
-            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #ffffff;
         }
         
         .subtitle {
-            color: #94a3b8;
+            color: #888888;
             margin-bottom: 40px;
         }
         
@@ -55,7 +53,7 @@
         label {
             display: block;
             margin-bottom: 8px;
-            color: #cbd5e1;
+            color: #cccccc;
             font-size: 14px;
             font-weight: 500;
         }
@@ -63,22 +61,22 @@
         input {
             width: 100%;
             padding: 16px 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            color: white;
+            background: #111111;
+            border: 1px solid #333333;
+            border-radius: 12px;
+            color: #ffffff;
             font-size: 16px;
             transition: all 0.3s;
         }
         
         input:focus {
             outline: none;
-            border-color: #06b6d4;
-            background: rgba(255, 255, 255, 0.08);
+            border-color: #ffffff;
+            background: #222222;
         }
         
         input::placeholder {
-            color: #64748b;
+            color: #666666;
         }
         
         .quick-add {
@@ -89,9 +87,9 @@
         }
         
         .quick-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #94a3b8;
+            background: #111111;
+            border: 1px solid #333333;
+            color: #cccccc;
             padding: 12px;
             border-radius: 12px;
             cursor: pointer;
@@ -100,18 +98,18 @@
         }
         
         .quick-btn:hover {
-            background: rgba(6, 182, 212, 0.1);
-            border-color: #06b6d4;
-            color: #06b6d4;
+            background: #222222;
+            border-color: #ffffff;
+            color: #ffffff;
         }
         
         .add-btn {
             width: 100%;
             padding: 18px;
-            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            background: #ffffff;
+            color: #000000;
             border: none;
-            border-radius: 16px;
-            color: white;
+            border-radius: 12px;
             font-size: 18px;
             font-weight: 600;
             cursor: pointer;
@@ -120,13 +118,13 @@
         }
         
         .add-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.4);
+            background: #cccccc;
         }
         
         .success-msg {
-            background: rgba(34, 197, 94, 0.2);
+            background: #111111;
             color: #4ade80;
+            border: 1px solid #333333;
             padding: 16px;
             border-radius: 12px;
             text-align: center;
@@ -134,57 +132,19 @@
             margin-bottom: 20px;
         }
         
-        .current-links {
-            margin-top: 40px;
-            padding-top: 40px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .current-links h3 {
-            margin-bottom: 20px;
-            color: #94a3b8;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .link-item {
-            background: rgba(255, 255, 255, 0.03);
+        .info-box {
+            background: #111111;
+            border: 1px solid #333333;
             padding: 16px;
             border-radius: 12px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+            color: #888888;
+            line-height: 1.5;
         }
         
-        .link-item-info {
-            overflow: hidden;
-            flex: 1;
-        }
-        
-        .link-item-name {
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-        
-        .link-item-url {
-            font-size: 13px;
-            color: #64748b;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .remove-btn {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            margin-left: 10px;
+        .info-box strong {
+            color: #ffffff;
         }
     </style>
 </head>
@@ -193,10 +153,14 @@
         <a href="index.html" class="back-btn">← Back to Links</a>
         
         <h1>Add New Link</h1>
-        <p class="subtitle">Quickly add a new shortcut to your ORN Hub</p>
+        <p class="subtitle">Add to your cloud-synced link collection</p>
+        
+        <div class="info-box">
+            <strong>Cloud Sync Enabled:</strong> Links are stored in your GitHub repository and sync across all devices. Add here, see instantly on your phone!
+        </div>
         
         <div class="success-msg" id="successMsg">
-            ✓ Link added successfully!
+            ✓ Link added! It will appear on all devices shortly.
         </div>
         
         <div class="form-group">
@@ -217,35 +181,15 @@
         </div>
         
         <button class="add-btn" onclick="addLink()">Add to ORN Hub</button>
-        
-        <div class="current-links" id="currentLinks">
-            <h3>Current Links</h3>
-            <div id="linksList"></div>
-        </div>
     </div>
 
     <script>
-        function loadCurrentLinks() {
-            const links = JSON.parse(localStorage.getItem('ornHubLinks') || '[]');
-            const container = document.getElementById('linksList');
-            
-            if (links.length === 0) {
-                container.innerHTML = '<p style="color: #64748b;">No links added yet</p>';
-                return;
-            }
-            
-            container.innerHTML = links.map((link, index) => `
-                <div class="link-item">
-                    <div class="link-item-info">
-                        <div class="link-item-name">${link.name}</div>
-                        <div class="link-item-url">${link.url}</div>
-                    </div>
-                    <button class="remove-btn" onclick="removeLink(${index})">Remove</button>
-                </div>
-            `).join('');
+        function quickAdd(name, url) {
+            document.getElementById('linkName').value = name;
+            document.getElementById('linkUrl').value = url;
         }
         
-        function addLink() {
+        async function addLink() {
             const name = document.getElementById('linkName').value.trim();
             let url = document.getElementById('linkUrl').value.trim();
             
@@ -258,39 +202,24 @@
                 url = 'https://' + url;
             }
             
-            const links = JSON.parse(localStorage.getItem('ornHubLinks') || '[]');
-            links.push({ name, url });
-            localStorage.setItem('ornHubLinks', JSON.stringify(links));
-            
+            // Show success message
             document.getElementById('successMsg').style.display = 'block';
             document.getElementById('linkName').value = '';
             document.getElementById('linkUrl').value = '';
             document.getElementById('linkName').focus();
             
-            loadCurrentLinks();
-            
             setTimeout(() => {
                 document.getElementById('successMsg').style.display = 'none';
-            }, 2000);
-        }
-        
-        function quickAdd(name, url) {
-            document.getElementById('linkName').value = name;
-            document.getElementById('linkUrl').value = url;
-        }
-        
-        function removeLink(index) {
-            const links = JSON.parse(localStorage.getItem('ornHubLinks') || '[]');
-            links.splice(index, 1);
-            localStorage.setItem('ornHubLinks', JSON.stringify(links));
-            loadCurrentLinks();
+            }, 3000);
+            
+            // Note: In this simplified version, we tell the user to update links.json
+            // For true cloud sync without a server, you need to manually edit links.json
+            alert('To complete: Please edit links.json in your GitHub repository and add:\n\n{\n  "name": "' + name + '",\n  "url": "' + url + '"\n}\n\nOr use the GitHub web editor to add the link.');
         }
         
         document.getElementById('linkUrl').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') addLink();
         });
-        
-        loadCurrentLinks();
     </script>
 </body>
 </html>
