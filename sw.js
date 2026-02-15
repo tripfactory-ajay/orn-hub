@@ -1,9 +1,10 @@
-const CACHE_NAME = 'orn-hub-v1';
+const CACHE_NAME = 'orn-hub-v2';
 const urlsToCache = [
   '/orn-hub/',
   '/orn-hub/index.html',
   '/orn-hub/admin.html',
-  '/orn-hub/orn-logo.png'
+  '/orn-hub/orn-logo.png',
+  '/orn-hub/links.json'
 ];
 
 self.addEventListener('install', (event) => {
