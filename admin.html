@@ -79,6 +79,7 @@
         .link-item span {
             color: #666666;
             font-size: 12px;
+            word-break: break-all;
         }
         
         .add-section {
@@ -130,21 +131,25 @@
             cursor: pointer;
             margin-bottom: 10px;
             text-decoration: none;
-            display: inline-block;
+            display: block;
             text-align: center;
         }
         
-        .btn-primary {
+        .btn-white {
             background: #ffffff;
             color: #000000;
         }
         
-        .btn-secondary {
+        .btn-white:hover {
+            background: #cccccc;
+        }
+        
+        .btn-green {
             background: #2ea043;
             color: #ffffff;
         }
         
-        .btn-secondary:hover {
+        .btn-green:hover {
             background: #3fb950;
         }
         
@@ -157,16 +162,23 @@
             display: none;
         }
         
+        .instructions h4 {
+            color: #4ade80;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
         .instructions code {
             background: #000000;
-            padding: 10px;
+            padding: 12px;
             display: block;
             margin: 10px 0;
             border-radius: 4px;
             font-family: monospace;
-            font-size: 12px;
+            font-size: 13px;
             color: #4ade80;
             overflow-x: auto;
+            white-space: pre;
         }
         
         .instructions ol {
@@ -189,12 +201,12 @@
         <p class="subtitle">Add links on desktop, see them instantly on your phone</p>
         
         <div class="current-links">
-            <h3>📋 Current Links (from links.json)</h3>
+            <h3>Current Links</h3>
             <div id="currentList">Loading...</div>
         </div>
         
         <div class="add-section">
-            <h3>➕ Add New Link</h3>
+            <h3>Add New Link</h3>
             
             <div class="form-group">
                 <label>Link Name</label>
@@ -206,29 +218,28 @@
                 <input type="url" id="linkUrl" placeholder="https://...">
             </div>
             
-            <button class="btn btn-primary" onclick="generateLink()">Generate Link Code</button>
+            <button class="btn btn-white" onclick="generateCode()">Generate Link Code</button>
             
-            <a href="https://github.com/tripfactory-ajay/orn-hub/edit/main/links.json" class="btn btn-secondary" target="_blank">
+            <a href="https://github.com/tripfactory-ajay/orn-hub/edit/main/links.json" class="btn btn-green" target="_blank">
                 Open links.json on GitHub
             </a>
             
             <div class="instructions" id="instructions">
-                <strong style="color: #ffffff;">Copy this code:</strong>
+                <h4>✓ Code Generated! Copy this:</h4>
                 <code id="codeBlock"></code>
                 <ol>
                     <li>Click "Open links.json on GitHub" button above</li>
-                    <li>Click the ✏️ pencil icon to edit</li>
-                    <li>Add a comma after the last link</li>
-                    <li>Paste the code below the last link</li>
+                    <li>Click the pencil icon to edit</li>
+                    <li>Add a comma after the last link's closing brace }</li>
+                    <li>Paste the green code below the last link</li>
                     <li>Click "Commit changes" at the bottom</li>
-                    <li>Wait 2 minutes, open app on your phone!</li>
+                    <li>Wait 2 minutes, check your phone!</li>
                 </ol>
             </div>
         </div>
     </div>
 
     <script>
-        // Load current links from links.json
         async function loadCurrentLinks() {
             try {
                 const response = await fetch('links.json?t=' + Date.now());
@@ -251,11 +262,11 @@
                 
             } catch (error) {
                 document.getElementById('currentList').innerHTML = 
-                    '<p style="color: #666666;">Error loading links. Make sure links.json exists.</p>';
+                    '<p style="color: #666666;">Error loading links</p>';
             }
         }
         
-        function generateLink() {
+        function generateCode() {
             const name = document.getElementById('linkName').value.trim();
             let url = document.getElementById('linkUrl').value.trim();
             
@@ -275,16 +286,8 @@
             
             document.getElementById('codeBlock').textContent = code;
             document.getElementById('instructions').style.display = 'block';
-            
-            // Auto-select code for easy copying
-            const codeBlock = document.getElementById('codeBlock');
-            const range = document.createRange();
-            range.selectNode(codeBlock);
-            window.getSelection().removeAllRanges();
-            window.getSelection().addRange(range);
         }
         
-        // Load on startup
         loadCurrentLinks();
     </script>
 </body>
