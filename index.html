@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     
     <title>ORN Hub</title>
     <link rel="manifest" href="manifest.json">
@@ -18,19 +18,18 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background: #000000;
             min-height: 100vh;
-            color: white;
+            color: #ffffff;
         }
         
         .app-header {
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(20px);
+            background: #000000;
+            border-bottom: 1px solid #333333;
             padding: 20px;
             position: sticky;
             top: 0;
             z-index: 100;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
             text-align: center;
         }
         
@@ -38,16 +37,13 @@
             width: 60px;
             height: 60px;
             border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
             margin-bottom: 10px;
         }
         
         .app-header h1 {
             font-size: 24px;
             font-weight: 700;
-            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #ffffff;
         }
         
         .admin-btn {
@@ -55,12 +51,13 @@
             right: 20px;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(255,255,255,0.1);
+            background: #ffffff;
+            color: #000000;
             border: none;
-            color: #06b6d4;
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 12px;
+            font-weight: 600;
             cursor: pointer;
             text-decoration: none;
         }
@@ -72,41 +69,40 @@
         }
         
         .link-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
+            background: #111111;
+            border: 1px solid #333333;
+            border-radius: 16px;
             padding: 20px;
             margin-bottom: 16px;
             display: flex;
             align-items: center;
             gap: 16px;
             text-decoration: none;
-            color: white;
+            color: #ffffff;
             transition: all 0.3s ease;
         }
         
         .link-card:active {
             transform: scale(0.98);
-            background: rgba(255, 255, 255, 0.08);
+            background: #222222;
         }
         
         .link-icon {
             width: 56px;
             height: 56px;
-            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            background: #ffffff;
             border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
             flex-shrink: 0;
             overflow: hidden;
         }
         
         .link-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
         }
         
         .link-content {
@@ -117,6 +113,7 @@
         .link-title {
             font-size: 18px;
             font-weight: 600;
+            color: #ffffff;
             margin-bottom: 4px;
             white-space: nowrap;
             overflow: hidden;
@@ -125,7 +122,7 @@
         
         .link-url {
             font-size: 13px;
-            color: #94a3b8;
+            color: #888888;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -134,30 +131,37 @@
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: #64748b;
+            color: #666666;
         }
         
         .loading {
             text-align: center;
             padding: 60px;
-            color: #94a3b8;
+            color: #666666;
         }
         
         .delete-btn {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
+            background: #ff3333;
+            color: #ffffff;
             border: none;
             width: 36px;
             height: 36px;
             border-radius: 10px;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 16px;
             opacity: 0;
             transition: opacity 0.3s;
         }
         
         .link-card:hover .delete-btn, .link-card:active .delete-btn {
             opacity: 1;
+        }
+        
+        .sync-status {
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #666666;
         }
     </style>
 </head>
@@ -168,19 +172,55 @@
         <a href="admin.html" class="admin-btn">+ Add</a>
     </div>
     
+    <div class="sync-status" id="syncStatus">Loading links...</div>
+    
     <div class="links-container" id="linksContainer">
         <div class="loading">Loading links...</div>
     </div>
 
     <script>
-        // Register service worker for proper PWA install
+        // Register service worker
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js').catch(console.error);
         }
         
-        function loadLinks() {
+        const LINKS_URL = 'links.json';
+        
+        async function loadLinks() {
             const container = document.getElementById('linksContainer');
-            const links = JSON.parse(localStorage.getItem('ornHubLinks') || '[]');
+            const status = document.getElementById('syncStatus');
+            
+            try {
+                // Fetch from GitHub (cloud sync)
+                const response = await fetch(`${LINKS_URL}?t=${Date.now()}`);
+                
+                if (!response.ok) throw new Error('Failed to load');
+                
+                const data = await response.json();
+                const links = data.links || [];
+                
+                // Save to localStorage for offline use
+                localStorage.setItem('ornHubLinksCache', JSON.stringify(links));
+                
+                status.textContent = `Last synced: ${new Date().toLocaleTimeString()}`;
+                renderLinks(links);
+                
+            } catch (error) {
+                console.log('Using cached links:', error);
+                status.textContent = 'Offline mode - using cached links';
+                
+                // Try to use cached links
+                const cached = localStorage.getItem('ornHubLinksCache');
+                if (cached) {
+                    renderLinks(JSON.parse(cached));
+                } else {
+                    renderLinks([]);
+                }
+            }
+        }
+        
+        function renderLinks(links) {
+            const container = document.getElementById('linksContainer');
             
             if (links.length === 0) {
                 container.innerHTML = `
@@ -195,43 +235,57 @@
             
             container.innerHTML = links.map((link, index) => `
                 <div class="link-card" onclick="window.open('${link.url}', '_blank')">
-                    <div class="link-icon">${getFavicon(link.url)}</div>
+                    <div class="link-icon">
+                        <img src="orn-logo.png" alt="ORN">
+                    </div>
                     <div class="link-content">
                         <div class="link-title">${link.name}</div>
                         <div class="link-url">${cleanUrl(link.url)}</div>
                     </div>
-                    <button class="delete-btn" onclick="deleteLink(event, ${index})">🗑</button>
+                    <button class="delete-btn" onclick="deleteLink(event, ${index})">×</button>
                 </div>
             `).join('');
-        }
-        
-        function getFavicon(url) {
-            try {
-                const domain = new URL(url).hostname;
-                return `<img src="https://www.google.com/s2/favicons?domain=${domain}&sz=128" 
-                    style="width: 32px; height: 32px;" 
-                    onerror="this.parentElement.innerHTML='🔗'">`;
-            } catch {
-                return '🔗';
-            }
         }
         
         function cleanUrl(url) {
             return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
         }
         
-        function deleteLink(e, index) {
+        async function deleteLink(e, index) {
             e.stopPropagation();
-            if (confirm('Delete this link?')) {
-                const links = JSON.parse(localStorage.getItem('ornHubLinks') || '[]');
+            if (!confirm('Delete this link?')) return;
+            
+            try {
+                // Fetch current links
+                const response = await fetch(`${LINKS_URL}?t=${Date.now()}`);
+                const data = await response.json();
+                const links = data.links || [];
+                
+                // Remove link
                 links.splice(index, 1);
-                localStorage.setItem('ornHubLinks', JSON.stringify(links));
-                loadLinks();
+                
+                // Save back (in real implementation, you'd need a server)
+                // For now, we'll just update localStorage and notify user
+                localStorage.setItem('ornHubLinksCache', JSON.stringify(links));
+                renderLinks(links);
+                
+                alert('Link deleted! Note: To permanently delete, please edit links.json in GitHub.');
+                
+            } catch (error) {
+                alert('Error deleting link. Please edit links.json manually in GitHub.');
             }
         }
         
-        window.addEventListener('focus', loadLinks);
+        // Auto-refresh every 30 seconds
+        setInterval(loadLinks, 30000);
+        
+        // Load on startup
         loadLinks();
+        
+        // Refresh when app comes to foreground
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) loadLinks();
+        });
     </script>
 </body>
 </html>
