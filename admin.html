@@ -121,6 +121,26 @@
             background: #cccccc;
         }
         
+        .github-btn {
+            width: 100%;
+            padding: 18px;
+            background: #2ea043;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: none;
+            text-decoration: none;
+            text-align: center;
+        }
+        
+        .github-btn:hover {
+            background: #3fb950;
+        }
+        
         .success-msg {
             background: #111111;
             color: #4ade80;
@@ -130,6 +150,8 @@
             text-align: center;
             display: none;
             margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.5;
         }
         
         .info-box {
@@ -146,6 +168,82 @@
         .info-box strong {
             color: #ffffff;
         }
+        
+        .current-links {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 1px solid #333333;
+        }
+        
+        .current-links h3 {
+            margin-bottom: 20px;
+            color: #888888;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .link-item {
+            background: #111111;
+            border: 1px solid #333333;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .link-item-info {
+            overflow: hidden;
+            flex: 1;
+        }
+        
+        .link-item-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #ffffff;
+        }
+        
+        .link-item-url {
+            font-size: 13px;
+            color: #666666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .remove-btn {
+            background: #ff3333;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-left: 10px;
+        }
+        
+        .edit-json-btn {
+            width: 100%;
+            padding: 14px;
+            background: #1f6feb;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .edit-json-btn:hover {
+            background: #388bfd;
+        }
     </style>
 </head>
 <body>
@@ -156,12 +254,10 @@
         <p class="subtitle">Add to your cloud-synced link collection</p>
         
         <div class="info-box">
-            <strong>Cloud Sync Enabled:</strong> Links are stored in your GitHub repository and sync across all devices. Add here, see instantly on your phone!
+            <strong>How it works:</strong> Enter link details below, then click "Open GitHub Editor" to automatically add it to your links.json file. Just click "Commit" on GitHub and you're done!
         </div>
         
-        <div class="success-msg" id="successMsg">
-            ✓ Link added! It will appear on all devices shortly.
-        </div>
+        <div class="success-msg" id="successMsg"></div>
         
         <div class="form-group">
             <label>Link Name</label>
@@ -180,16 +276,49 @@
             <button class="quick-btn" onclick="quickAdd('Voyager', 'https://tripfactory-ajay.github.io/tripfactory/voyager')">+ Voyager</button>
         </div>
         
-        <button class="add-btn" onclick="addLink()">Add to ORN Hub</button>
+        <button class="add-btn" onclick="prepareGitHubEdit()">➕ Prepare Link</button>
+        
+        <a href="#" class="github-btn" id="githubBtn" target="_blank">
+            🚀 Open GitHub Editor to Add Link
+        </a>
+        
+        <a href="https://github.com/tripfactory-ajay/orn-hub/edit/main/links.json" class="edit-json-btn" target="_blank">
+            ✏️ Edit links.json Directly
+        </a>
+        
+        <div class="current-links" id="currentLinks">
+            <h3>Current Links (from this device)</h3>
+            <div id="linksList"></div>
+        </div>
     </div>
 
     <script>
+        // Load current links from localStorage (device-only, for reference)
+        function loadCurrentLinks() {
+            const links = JSON.parse(localStorage.getItem('ornHubLinksCache') || '[]');
+            const container = document.getElementById('linksList');
+            
+            if (links.length === 0) {
+                container.innerHTML = '<p style="color: #666666;">No cached links on this device</p>';
+                return;
+            }
+            
+            container.innerHTML = links.map((link, index) => `
+                <div class="link-item">
+                    <div class="link-item-info">
+                        <div class="link-item-name">${link.name}</div>
+                        <div class="link-item-url">${link.url}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
         function quickAdd(name, url) {
             document.getElementById('linkName').value = name;
             document.getElementById('linkUrl').value = url;
         }
         
-        async function addLink() {
+        function prepareGitHubEdit() {
             const name = document.getElementById('linkName').value.trim();
             let url = document.getElementById('linkUrl').value.trim();
             
@@ -202,24 +331,40 @@
                 url = 'https://' + url;
             }
             
-            // Show success message
-            document.getElementById('successMsg').style.display = 'block';
-            document.getElementById('linkName').value = '';
-            document.getElementById('linkUrl').value = '';
-            document.getElementById('linkName').focus();
+            // Create the new link JSON
+            const newLink = `    {
+      "name": "${name}",
+      "url": "${url}"
+    }`;
             
-            setTimeout(() => {
-                document.getElementById('successMsg').style.display = 'none';
-            }, 3000);
+            // Show instructions
+            const msg = document.getElementById('successMsg');
+            msg.innerHTML = `
+                <strong>Link Prepared!</strong><br><br>
+                1. Click the green button below to open GitHub<br>
+                2. Add this code to the links array:<br>
+                <code style="background:#000;padding:10px;display:block;margin:10px 0;text-align:left;">
+${newLink}
+                </code>
+                3. Click "Commit changes"<br>
+                4. Wait 2 minutes, check your phone!
+            `;
+            msg.style.display = 'block';
             
-            // Note: In this simplified version, we tell the user to update links.json
-            // For true cloud sync without a server, you need to manually edit links.json
-            alert('To complete: Please edit links.json in your GitHub repository and add:\n\n{\n  "name": "' + name + '",\n  "url": "' + url + '"\n}\n\nOr use the GitHub web editor to add the link.');
+            // Show GitHub button
+            const githubBtn = document.getElementById('githubBtn');
+            githubBtn.href = 'https://github.com/tripfactory-ajay/orn-hub/edit/main/links.json';
+            githubBtn.style.display = 'inline-block';
+            
+            // Scroll to message
+            msg.scrollIntoView({ behavior: 'smooth' });
         }
         
         document.getElementById('linkUrl').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') addLink();
+            if (e.key === 'Enter') prepareGitHubEdit();
         });
+        
+        loadCurrentLinks();
     </script>
 </body>
 </html>
